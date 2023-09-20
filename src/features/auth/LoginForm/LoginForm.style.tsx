@@ -1,4 +1,4 @@
-import { makeStyles } from 'tss-react/mui';
+import {makeStyles} from 'tss-react/mui';
 
 export default makeStyles()(() => {
     return {
@@ -13,5 +13,12 @@ export default makeStyles()(() => {
                 paddingRight: 0,
             },
         },
+        forgotPasswordContainer: {
+            display: 'inline-flex',
+            alignItems: 'center',
+        },
+        forgotPasswordContainerLink: {
+            marginTop: 0,
+        }
     };
 });

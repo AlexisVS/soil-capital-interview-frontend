@@ -8,8 +8,9 @@ export const useAppInit = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        async function loadToken() {
+        function loadToken() {
             const token = getStorageToken();
+
             if (token) {
                 dispatch(addToken(token));
             }

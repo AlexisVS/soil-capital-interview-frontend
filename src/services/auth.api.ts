@@ -1,6 +1,9 @@
 import { api } from '@services';
 import { LoginRequestI } from './auth.types';
 import i18n from 'i18next';
+import * as jose from 'jose';
+import { addToken } from '@features/auth';
+import { clearStorageToken, setStorageToken } from '@utils';
 
 type UserT = {
     id: number;
@@ -18,9 +21,28 @@ export const authApi = api.injectEndpoints({
                     method: 'GET',
                 };
             },
-            transformResponse: (response: UserT[]) => {
+            transformResponse: async (response: UserT[]) => {
                 if (response.length) {
-                    i18n.changeLanguage('en');
+                    await i18n.changeLanguage('en');
+
+                    const secret = new TextEncoder().encode(response[0].email);
+                    const token = await new jose.SignJWT({})
+                        .setProtectedHeader({ alg: 'HS256' })
+                        .setIssuedAt()
+                        .setIssuer('')
+                        .setAudience('')
+                        .setExpirationTime('2h')
+                        .sign(secret);
+
+                    clearStorageToken();
+                    setStorageToken(token, false);
+
+                    addToken({
+                        user: response[0],
+                        access_token: token,
+                        partnerId: parseInt(jose.decodeJwt(token).partner_id as string),
+                    });
+
                     return response;
                 }
                 throw new Error('ACCESS_DENIED');
@@ -36,5 +58,4 @@ export const authApi = api.injectEndpoints({
 });
 
 export const { useLoginMutation, useUserMutation } = authApi;
-
 export * from './auth.types';

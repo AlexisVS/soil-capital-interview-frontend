@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { RootState } from '../store';
+import { RootState } from '@/store';
 
 export const api = createApi({
     baseQuery: fetchBaseQuery({
@@ -9,6 +9,7 @@ export const api = createApi({
             headers.set('Content-Type', 'application/json');
             headers.set('Accept', 'application/json, */*');
             const token = (getState() as RootState).auth.access_token;
+
             if (token) {
                 headers.set('authorization', `Bearer ${token}`);
             }

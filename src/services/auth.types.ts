@@ -1,5 +1,3 @@
-import { UserI } from '@services';
-
 export interface LoginRequestI {
     email: string;
     password: string;

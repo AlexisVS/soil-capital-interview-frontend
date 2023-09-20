@@ -1,7 +1,6 @@
 export function setStorageToken(token: string, remember: boolean) {
     if (remember) {
         localStorage.setItem('token', token);
-        return;
     }
     sessionStorage.setItem('token', token);
 }

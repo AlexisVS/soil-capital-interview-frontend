@@ -1,13 +1,11 @@
 import { Box, Button, Checkbox, Link, TextField } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useLoginMutation } from '@services';
-import { setStorageToken } from '@utils';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import useLoginFormStyle from './LoginForm.style';
 
 type LoginFormDataT = {
@@ -34,7 +32,8 @@ function LoginForm() {
 
     const onSubmit = async (data: LoginFormDataT) => {
         try {
-            const body = await login(data).unwrap();
+            await login(data).unwrap();
+
             navigate('/');
         } catch (err) {
             console.error(err);
@@ -58,26 +57,35 @@ function LoginForm() {
                     type="password"
                     autoComplete="current-password"
                 />
-                <Link className={classes.checkbox} component={RouterLink} to="/forgot-password" variant="button">
-                    {t('buttons.forgot-password')}
-                </Link>
-                <Box className={classes.checkbox} mb={2} textAlign="left">
-                    <Controller
-                        control={control}
-                        name="remember"
-                        render={({ field: { onChange, onBlur, value, ref } }) => (
-                            <Checkbox
-                                onBlur={onBlur} // notify when input is touched
-                                onChange={onChange} // send value to hook form
-                                checked={value ?? false}
-                                inputRef={ref}
-                                inputProps={{
-                                    'aria-label': t('labels.remember-me'),
-                                }}
-                            ></Checkbox>
-                        )}
-                    />
-                </Box>
+                <br />
+                <div className={classes.forgotPasswordContainer}>
+                    <Link
+                        className={classes.checkbox && classes.forgotPasswordContainerLink}
+                        component={RouterLink}
+                        to="/forgot-password"
+                        variant="button"
+                    >
+                        {t('buttons.forgot-password')}
+                    </Link>
+
+                    <Box className={classes.checkbox} style={{ marginTop: 0 }} textAlign="left">
+                        <Controller
+                            control={control}
+                            name="remember"
+                            render={({ field: { onChange, onBlur, value, ref } }) => (
+                                <Checkbox
+                                    onBlur={onBlur} // notify when input is touched
+                                    onChange={onChange} // send value to hook form
+                                    checked={value ?? false}
+                                    inputRef={ref}
+                                    inputProps={{
+                                        'aria-label': t('labels.remember-me'),
+                                    }}
+                                ></Checkbox>
+                            )}
+                        />
+                    </Box>
+                </div>
                 <Box mt={6}>
                     <Button type="submit" variant="contained" disableElevation fullWidth>
                         {t('buttons.login')}
