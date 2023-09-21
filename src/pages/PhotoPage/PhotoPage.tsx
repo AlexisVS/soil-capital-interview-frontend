@@ -1,13 +1,42 @@
-import { photosApi, useGetPhotosQuery } from '@services/photo.api';
+import { usePhotosMutation } from '@services/photo.api';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { usePhotos } from '@hooks/usePhotos';
+import { addPhotos } from '@features/photos/photosSlice';
 
 function PhotoPage() {
-    // Use the useGetPhotosQuery hook to fetch photos
-    const useGetPokemonByNameQuery = photosApi.endpoints.getPhotos.useQuery;
+    const dispatch = useDispatch();
+    const [photos] = usePhotosMutation();
+    const fetchPhotos = async () => {
+        const response = await photos();
+        dispatch(addPhotos(response.data));
+    };
+    const photosGallery = usePhotos() as string[];
 
-    console.log(useGetPokemonByNameQuery());
+    useEffect(() => {
+        fetchPhotos();
+    }, []);
+
+    const containerStyle = {
+        display: 'flex',
+        flexWrap: 'wrap',
+        flexGrow: 1,
+        justifyContent: 'space-between',
+    };
+
+    const imgStyle = {
+        objectFit: 'cover',
+        maxWidth: '100%',
+        width: 100 / 3 + '%',
+        minWidth: '33%',
+        height: 'auto',
+    };
+
     return (
-        <div>
-            <h1>Photo Page</h1>
+        <div style={containerStyle}>
+            {photosGallery.map((url, index) => (
+                <img style={imgStyle} key={url + index} src={url} alt={`Image`} />
+            ))}
         </div>
     );
 }

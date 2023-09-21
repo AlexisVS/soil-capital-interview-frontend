@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { api } from '@services';
 import { authReducer } from '@features/auth';
 import localStorageMiddleware from '@/Middleware/localStorageMiddleware';
-import { photosApi } from '@services/photo.api';
+import { photoReducer } from '@features/photos/photosSlice';
 
 const localStorageKey = 'root'; // Same key used in localStorageMiddleware
 const localStorageState = localStorage.getItem(localStorageKey);
@@ -15,11 +15,10 @@ export const store = configureStore({
     reducer: {
         [api.reducerPath]: api.reducer,
         auth: authReducer,
-        photos: photosApi.reducer,
+        photos: photoReducer,
     },
     preloadedState: { ...initialState },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat([api.middleware, localStorageMiddleware, photosApi.middleware]),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([api.middleware, localStorageMiddleware]),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

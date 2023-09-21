@@ -1,17 +1,25 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { api } from '@services/api.service';
 
-export const photosApi = createApi({
-    reducerPath: 'photosApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: process.env.API_URL,
-    }),
+export const photosApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        // Define a query endpoint for fetching photos
-        getPhotos: builder.query({
-            query: () => 'photos', // Adjust the URL as needed for your API
+        photos: builder.mutation({
+            query: () => {
+                return {
+                    url: 'photos',
+                    method: 'GET',
+                };
+            },
+            transformResponse: (response) => {
+                const result = response as Array<{ url: string }>;
+                console.log(
+                    'res',
+                    result.map((photo) => photo.url),
+                );
+                return result.map((photo) => photo.url);
+            },
         }),
     }),
 });
 
 // Export the useGetPhotosQuery hook
-export const { useGetPhotosQuery } = photosApi;
+export const { usePhotosMutation } = photosApi;
